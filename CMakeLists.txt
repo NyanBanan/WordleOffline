@@ -6,14 +6,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_PREFIX_PATH "/usr/local/Qt-6.6.3/lib/cmake")
+if(ANDROID)
+    set(QT_HOST_PATH "/usr/local/Qt-6.6.3")
+    set(QT_HOST_PATH_CMAKE_DIR "/usr/local/Qt-6.6.3/lib/cmake")
+    set(CMAKE_PREFIX_PATH "/usr/qt6_6_android/lib/cmake")
+else()
+    set(CMAKE_PREFIX_PATH "/usr/local/Qt-6.6.3/lib/cmake")
+endif()
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick Qml)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick Qml Multimedia)
-
-add_executable(QMLWordle main.cpp)
+qt_add_executable(QMLWordle main.cpp)
 
 set_source_files_properties(Colors.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(GameSettings.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(GeoPosAccessManagerSingleton.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 
 qt_add_qml_module(QMLWordle
@@ -22,6 +28,7 @@ qt_add_qml_module(QMLWordle
         RESOURCE_PREFIX /
         SOURCES
         JsonWordProvider.cpp
+        GeoPosAccessManager.cpp
         QML_FILES
         main.qml
         Game.qml
@@ -29,13 +36,14 @@ qt_add_qml_module(QMLWordle
         ButtonBackRect.qml
         Colors.qml
         MainMenu.qml
+        GeoPosAccessManagerSingleton.qml
         SettingsMenu.qml
         LoseScreen.qml
         WordRow.qml
         WinScreen.qml
 )
 
-target_link_libraries(QMLWordle PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Quick Qt6::Qml Qt6::Multimedia)
+target_link_libraries(QMLWordle PRIVATE Qt6::Core Qt6::Widgets Qt6::Gui Qt6::Quick Qt6::Qml)
 
 qt_add_resources(QMLWordle "images"
         PREFIX "/"
@@ -55,8 +63,8 @@ qt_add_resources(QMLWordle "audio"
         ./audio/DefeatClassicLeagueofLegendsAnnouncer-SoundEffectforediting.wav
 )
 
-if (ANDROID)
-    set_target_properties(QMLWordle PROPERTIES
-            QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../android"
-    )
-endif ()
+# if (ANDROID)
+#     set_target_properties(QMLWordle PROPERTIES
+#             QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../android"
+#     )
+# endif ()

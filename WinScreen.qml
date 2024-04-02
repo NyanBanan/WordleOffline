@@ -9,11 +9,4 @@ Image{
         id: clickArea
         anchors.fill: parent
     }
-    Component.onCompleted:{
-        victorySound.play()
-    }
-    SoundEffect {
-        id: victorySound
-        source: "qrc:/audio/VictoryAudio.wav"
-    }
 }

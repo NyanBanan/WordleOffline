@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Shapes
+import QtQuick.Dialogs
 import QtQml
 
 ColumnLayout {
@@ -13,7 +14,7 @@ ColumnLayout {
         Rectangle {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 
-            implicitWidth: 120
+            implicitWidth: 140
             implicitHeight: 50
 
             color: Colors.green
@@ -27,6 +28,71 @@ ColumnLayout {
         TextField {
             id: apiUrlInput
         }
+        Button{
+            text: "..."
+            implicitWidth: 70
+            implicitHeight: 50
+            onClicked:{
+                fileDialog.open()
+            }
+        }
+        FileDialog {
+            id: fileDialog
+            nameFilters: ["JSON files (*.json)"]
+            onAccepted: apiUrlInput.text = currentFile //selectedFile doesnt exist in Qt.labs.platform
+        }
+    }
+    RowLayout {
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        Rectangle {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
+            implicitWidth: 140
+            implicitHeight: 50
+
+            color: Colors.green
+            border.color: Colors.black
+            border.width: 1
+            Text {
+                anchors.centerIn: parent
+                text: "Текущий язык"
+            }
+        }
+        Rectangle {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
+            implicitWidth: 120
+            implicitHeight: 30
+
+            color: "white"
+            border.color: Colors.black
+            border.width: 1
+            Text {
+                anchors.centerIn: parent
+                text: GameSettings.language
+            }
+        }
+    }
+    RowLayout {
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        Rectangle {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
+            implicitWidth: 140
+            implicitHeight: 50
+
+            color: Colors.green
+            border.color: Colors.black
+            border.width: 1
+            Text {
+                anchors.centerIn: parent
+                text: "Доступные языки"
+            }
+        }
+        ComboBox {
+            id: language
+            model: GameSettings.accessibleLanguages
+        }
     }
 
     Button {
@@ -38,12 +104,13 @@ ColumnLayout {
         background: Loader {
             source: "ButtonBackRect.qml"
         }
-        onClicked:{
-            GameSettings.apiUrl = apiUrlInput.text
+        onClicked: {
+            GameSettings.jsonData = apiUrlInput.text
+            GameSettings.language = language.currentText
         }
         Component.onCompleted: {
             background.item.button = save
-            apiUrlInput.text = GameSettings.apiUrl
+            apiUrlInput.text = GameSettings.jsonData
         }
     }
 

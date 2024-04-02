@@ -6,7 +6,7 @@ import QtQml
 
 ColumnLayout {
     property int currentTry: 0
-    property string rightWord: "verac"
+    property string rightWord
 
     signal win()
 
@@ -25,10 +25,14 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 
         validator: RegularExpressionValidator {
-            regularExpression: /([a-z]{5})|(^$)/
+            regularExpression: GameSettings.language === "русский" ? /([а-яA-Я]{5})/ : /([a-zA-Z]{5})/
         }
+        placeholderText: "Введите слово"
         onAccepted: {
-            let result = words.itemAt(currentTry).validateInput(rightWord, inputWord.text)
+            if (inputWord.text.length === 0) {
+                return
+            }
+            let result = words.itemAt(currentTry).validateInput(rightWord, inputWord.text.toLowerCase())
             ++currentTry
             if (result) {
                 win()

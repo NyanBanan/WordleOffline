@@ -33,6 +33,9 @@ ApplicationWindow {
             }
         }
     }
+    Component.onCompleted: {
+        GeoPosAccessManagerSingleton.updateGeoLocation()
+    }
 
     Timer {
         interval: 1200; running: true; repeat: true
@@ -62,25 +65,47 @@ ApplicationWindow {
         }
     }
 
-    Connections{
-        target: wordProvider
-        function onError(message){
-            errorDialog.text = message
-            errorDialog.open()
+    Connections {
+        target: GameSettings
+
+        function onJsonDataChanged() {
+            wordProvider.parseFile(GameSettings.jsonData);
+            GameSettings.accessibleLanguages = wordProvider.getLanguages();
         }
     }
 
-    Connections{
-        target: GameSettings
-        function onApiUrlChanged(){
-            wordProvider.parseFile(GameSettings.apiUrl);
+    Connections {
+        target: wordProvider
+
+        function onError(message) {
+            errorDialog.text = message
+            errorDialog.open()
         }
     }
 
     JsonWordProvider {
         id: wordProvider
         Component.onCompleted: {
-            parseFile(GameSettings.apiUrl);
+            parseFile(GameSettings.jsonData);
+            console.log(wordProvider.getLanguages())
+            GameSettings.accessibleLanguages = wordProvider.getLanguages();
+        }
+    }
+
+    Connections {
+        target: GeoPosAccessManagerSingleton
+
+        function onError(message) {
+            errorDialog.text = message
+            errorDialog.open()
+        }
+
+        function onLastCountryUpdated(new_country) {
+            if (new_country === "Russia") {
+                GameSettings.language = "русский"
+            } else {
+                GameSettings.language = "english"
+            }
         }
     }
 
@@ -112,7 +137,7 @@ ApplicationWindow {
             }
             Component.onCompleted: {
                 console.log("game")
-                rightWord = wordProvider.getRandomWord()
+                rightWord = wordProvider.getRandomWord(GameSettings.language)
                 console.log(rightWord)
             }
         }
@@ -135,5 +160,5 @@ ApplicationWindow {
             }
         }
     }
-    WinScreen{}
+    // WinScreen{S}
 }

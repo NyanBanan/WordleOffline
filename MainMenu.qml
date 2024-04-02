@@ -8,11 +8,11 @@ ColumnLayout {
     property alias start: start
     property alias settings: settings
     property alias exit: exit
-
+    
     Image {
-        Layout.fillWidth: true
-        Layout.maximumWidth: 600
-        Layout.maximumHeight: 200
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        Layout.preferredWidth: 300
+        Layout.preferredHeight: 200
         source: "qrc:/images/logo.png"
     }
     Button {

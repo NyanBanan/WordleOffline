@@ -6,6 +6,8 @@
 #define QMLWORDLE_JSONWORDPROVIDER_HPP
 
 #include <QJsonObject>
+#include <QMap>
+#include <QList>
 #include <QRandomGenerator>
 #include <QtQml>
 #include <QObject>
@@ -15,16 +17,18 @@ class JsonWordProvider: public QObject{
     QML_ELEMENT
 public:
     Q_INVOKABLE
-    QString getRandomWord();
+    QString getRandomWord(QString language);
+    Q_INVOKABLE
+    QStringList getLanguages();
 
     Q_INVOKABLE
     void parseFile(QString path);
-    void parseJson(QJsonArray json);
+    void parseJson(QJsonObject json);
 signals:
     void error(QString message);
 
 private:
-    QList<QString> _words;
+    QMap<QString, QList<QString>> _words;
 };
 
 
